@@ -30,12 +30,17 @@ const (
 	PersistenceDBKindTagName       = "db_kind"
 	WorkerPluginNameTagName        = "worker_plugin_name"
 	WorkerStorageDriverTypeTagName = "worker_storage_driver_type"
-	headerCallsiteTagName          = "header_callsite"
-	ArchetypeTagName               = "archetype"
-	ChasmTaskTypeTagName           = "chasm_task_type"
-	timeoutTypeTagName             = "timeout_type"
-	LastAttemptCauseTagName        = "last_attempt_cause"
-	AttemptStageTagName            = "attempt_stage"
+	PollerKindTagName              = "poller_kind"
+	// Deliberately prefixed: Prometheus already uses "instance" for the scrape target,
+	// which is the matching host, not the worker's host.
+	WorkerHostNameTagName   = "worker_host_name"
+	WorkerProcessIDTagName  = "worker_process_id"
+	headerCallsiteTagName   = "header_callsite"
+	ArchetypeTagName        = "archetype"
+	ChasmTaskTypeTagName    = "chasm_task_type"
+	timeoutTypeTagName      = "timeout_type"
+	LastAttemptCauseTagName = "last_attempt_cause"
+	AttemptStageTagName     = "attempt_stage"
 )
 
 // This package should hold all the metrics and tags for temporal
@@ -1423,6 +1428,26 @@ var (
 		"poller_autoscaling_heartbeat_count",
 		WithDescription(
 			"Count of worker heartbeats with poller autoscaling enabled. Dimensions: namespace, taskqueue, task_type"),
+	)
+	// The two metrics below emit one series per worker and are intended for short-lived
+	// diagnosis, not steady-state monitoring. See the docstring on the dynamic config
+	// matching.enablePerWorkerPollerMetrics for the retention caveat.
+	WorkerPollerTarget = NewGaugeDef(
+		"worker_poller_target",
+		WithDescription(
+			"Poller count the worker's autoscaler is targeting, as reported in its heartbeat. Zero means the "+
+				"worker has no autoscaler for that poller (fixed poller count). Emitted only when the opt-in "+
+				"dynamic config matching.enablePerWorkerPollerMetrics is enabled for the namespace. Dimensions: "+
+				"namespace, taskqueue, task_type, poller_kind (normal/sticky), worker_host_name, worker_process_id"),
+	)
+	WorkerPollerCurrent = NewGaugeDef(
+		"worker_poller_current",
+		WithDescription(
+			"Poll RPCs the worker had in flight when it sampled its heartbeat. This is an instantaneous sample "+
+				"of in-flight RPCs, not the number of running poller goroutines, so a busy worker reads below "+
+				"worker_poller_target for healthy reasons. Emitted only when the opt-in dynamic config "+
+				"matching.enablePerWorkerPollerMetrics is enabled for the namespace. Dimensions: namespace, "+
+				"taskqueue, task_type, poller_kind (normal/sticky), worker_host_name, worker_process_id"),
 	)
 	PollerScaleDecisionCounter = NewCounterDef(
 		"poller_scale_decision",

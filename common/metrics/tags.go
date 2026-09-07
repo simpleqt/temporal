@@ -396,6 +396,30 @@ func WorkerStorageDriverTypeTag(value string) Tag {
 	return Tag{Key: WorkerStorageDriverTypeTagName, Value: value}
 }
 
+// PollerKindTag distinguishes normal pollers from sticky workflow pollers, which
+// share a task queue type but are scaled independently by the worker.
+func PollerKindTag(value string) Tag {
+	return Tag{Key: PollerKindTagName, Value: value}
+}
+
+// WorkerHostNameTag identifies the host a worker runs on, as self-reported in its heartbeat.
+func WorkerHostNameTag(value string) Tag {
+	if value == "" {
+		value = unknownValue
+	}
+	return Tag{Key: WorkerHostNameTagName, Value: value}
+}
+
+// WorkerProcessIDTag identifies the worker's process within its host, as self-reported in
+// its heartbeat. Together with WorkerHostNameTag and the task queue this identifies a worker
+// without using the churning worker instance key.
+func WorkerProcessIDTag(value string) Tag {
+	if value == "" {
+		value = unknownValue
+	}
+	return Tag{Key: WorkerProcessIDTagName, Value: value}
+}
+
 // VersionedTag represents whether a loaded task queue manager represents a specific version set or build ID or not.
 func VersionedTag(versioned string) Tag {
 	return Tag{Key: versionedTagName, Value: versioned}

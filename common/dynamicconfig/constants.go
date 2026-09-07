@@ -1711,6 +1711,20 @@ all namespaces. When exceeded, the oldest entries (older than MinEvictAge) are e
 		`MatchingWorkerRegistryEvictionInterval is how often the worker registry runs background eviction
 to remove expired entries. Should be shorter than EntryTTL for timely cleanup. Lower values mean faster cleanup but more CPU overhead.`,
 	)
+	MatchingEnablePerWorkerPollerMetrics = NewNamespaceBoolSetting(
+		"matching.enablePerWorkerPollerMetrics",
+		false,
+		`MatchingEnablePerWorkerPollerMetrics controls whether to export per-worker poller metrics
+(worker_poller_target, worker_poller_current) derived from worker heartbeats. These emit one series per
+worker, per poller, tagged with the worker's host name and process id, which is useful for diagnosing a
+specific worker over time.
+
+Intended for short-lived diagnosis, not steady-state monitoring. Disabling this setting stops new series
+from being emitted but does NOT reclaim series already emitted: they continue to be exported at their last
+value until the matching hosts restart. All of a namespace's heartbeats are handled by a single matching
+host, so the cost concentrates there. Avoid leaving this enabled across deployments, which change every
+worker's host name and process id.`,
+	)
 	MatchingSpreadRoutingBatchSize = NewGlobalTypedSettingWithConverter(
 		"matching.spreadRoutingBatchSize",
 		ConvertGradualChange[int](0),

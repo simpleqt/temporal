@@ -49,6 +49,11 @@ func (s *WorkerRegistryTestSuite) TestWorkerRegistry_DescribeWorker() {
 				WorkerInstanceKey:   worker1Key,
 				TaskQueue:           taskQueue1,
 				TotalStickyCacheHit: 1,
+				WorkflowPollerInfo: &workerpb.WorkerPollerInfo{
+					CurrentPollers: 3,
+					IsAutoscaling:  true,
+					TargetPollers:  9,
+				},
 			},
 			{
 				WorkerInstanceKey:   worker2Key,
@@ -95,6 +100,8 @@ func (s *WorkerRegistryTestSuite) TestWorkerRegistry_DescribeWorker() {
 		s.Equal(worker1Key, workerHeartbeat.GetWorkerInstanceKey())
 		s.Equal(taskQueue1, workerHeartbeat.GetTaskQueue())
 		s.Equal(int32(1), workerHeartbeat.GetTotalStickyCacheHit())
+		s.Equal(int32(3), workerHeartbeat.GetWorkflowPollerInfo().GetCurrentPollers())
+		s.Equal(int32(9), workerHeartbeat.GetWorkflowPollerInfo().GetTargetPollers())
 	}
 	// Test success case - verify worker2 heartbeat data
 	{

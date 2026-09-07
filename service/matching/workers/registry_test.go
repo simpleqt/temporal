@@ -648,7 +648,7 @@ func TestRegistryImpl_RecordStorageDriverMetric(t *testing.T) {
 		params := testDefaultRegistryParams(captureHandler)
 		r := newRegistryImpl(params)
 
-		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), []*workerpb.WorkerHeartbeat{
+		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), nil, []*workerpb.WorkerHeartbeat{
 			{
 				WorkerInstanceKey: "worker1",
 				Drivers:           []*workerpb.StorageDriverInfo{{Type: "s3"}},
@@ -668,7 +668,7 @@ func TestRegistryImpl_RecordStorageDriverMetric(t *testing.T) {
 		params.MetricsConfig.ExternalPayloadsEnabled = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(true)
 		r := newRegistryImpl(params)
 
-		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), []*workerpb.WorkerHeartbeat{
+		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), nil, []*workerpb.WorkerHeartbeat{
 			{
 				WorkerInstanceKey: "worker1",
 				Drivers:           []*workerpb.StorageDriverInfo{{Type: "s3"}},
@@ -691,7 +691,7 @@ func TestRegistryImpl_RecordStorageDriverMetric(t *testing.T) {
 		params.MetricsConfig.ExternalPayloadsEnabled = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(true)
 		r := newRegistryImpl(params)
 
-		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), []*workerpb.WorkerHeartbeat{
+		r.metricsEmitter.emit(namespace.ID("test-ns-id"), namespace.Name("test-ns"), nil, []*workerpb.WorkerHeartbeat{
 			{
 				WorkerInstanceKey: "worker1",
 				Drivers:           []*workerpb.StorageDriverInfo{{Type: "s3"}},

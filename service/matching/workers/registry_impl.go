@@ -407,7 +407,7 @@ func (m *registryImpl) Stop() {
 
 func (m *registryImpl) RecordWorkerHeartbeats(nsID namespace.ID, nsName namespace.Name, principal *commonpb.Principal, workerHeartbeat []*workerpb.WorkerHeartbeat) {
 	m.upsertHeartbeats(nsID, nsName, principal, workerHeartbeat)
-	m.metricsEmitter.emit(nsID, nsName, workerHeartbeat)
+	m.metricsEmitter.emit(nsID, nsName, principal, workerHeartbeat)
 }
 
 func buildQueryPredicate(nsID namespace.ID, query string) (func(*workerpb.WorkerHeartbeat) bool, error) {
